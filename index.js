@@ -4,7 +4,7 @@ import lodash from 'lodash'
 import nunjucks from 'nunjucks'
 import {
     getPackageInfo,
-    merge, normalizePath,
+    merge,
     pluginBundle,
     pluginMiddleware,
     pluginReload,
@@ -23,7 +23,8 @@ const defaultOptions = {
     root: null,
     filters: {},
     extensions: {},
-    globals: {
+    globals: {},
+    context: {
         format: 'njk'
     },
     data: ['src/data/**/*.json'],
@@ -39,8 +40,8 @@ const renderTemplate = async ({ filename, server, resolvedConfig }, content, opt
         ? processData({
             paths: options.data,
             root: resolvedConfig.root
-        }, options.globals)
-        : options.globals
+        }, options.context)
+        : options.context
 
     if (initialFilename.endsWith('.json')) {
         lodash.merge(context, JSON.parse(content))
@@ -78,6 +79,10 @@ const renderTemplate = async ({ filename, server, resolvedConfig }, content, opt
         }
 
         nunjucksEnvironment.addFilter(name, options.filters[name])
+    })
+
+    Object.keys(options.globals).forEach(name => {
+        nunjucksEnvironment.addGlobal(name, options.globals[name])
     })
 
     Object.keys(options.extensions).forEach(name => {

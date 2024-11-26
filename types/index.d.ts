@@ -30,7 +30,8 @@ export interface PluginUserConfig {
     root?: string
     filters?: Object
     extensions?: Object
-    globals?: Object
+    globals?: Object,
+    context?: Object,
     data?: string | string[]
     formats?: string[]
     ignoredPaths?: string[]
